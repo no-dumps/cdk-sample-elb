@@ -1,13 +1,21 @@
-import { expect as expectCDK, matchTemplate, MatchStyle } from '@aws-cdk/assert';
+import { expect as expectCDK, haveResource } from '@aws-cdk/assert';
 import * as cdk from '@aws-cdk/core';
 import ElbSample = require('../lib/elb_sample-stack');
 
-test('Empty Stack', () => {
+test('SQS Queue Created', () => {
     const app = new cdk.App();
     // WHEN
     const stack = new ElbSample.ElbSampleStack(app, 'MyTestStack');
     // THEN
-    expectCDK(stack).to(matchTemplate({
-      "Resources": {}
-    }, MatchStyle.EXACT))
+    expectCDK(stack).to(haveResource("AWS::SQS::Queue",{
+      VisibilityTimeout: 300
+    }));
+});
+
+test('SNS Topic Created', () => {
+  const app = new cdk.App();
+  // WHEN
+  const stack = new ElbSample.ElbSampleStack(app, 'MyTestStack');
+  // THEN
+  expectCDK(stack).to(haveResource("AWS::SNS::Topic"));
 });
